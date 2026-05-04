@@ -1,0 +1,23 @@
+{
+  "name": "OPC Reports",
+  "short_name": "OPC Reports",
+  "description": "OPC Power BI Reports Dashboard",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#12239e",
+  "theme_color": "#12239e",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "https://www.opc.co.in/images/logo.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://www.opc.co.in/images/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

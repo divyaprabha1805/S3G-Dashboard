@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>OPC Reports</title>
+
+  <!-- PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="OPC Reports" />
+  <meta name="theme-color" content="#12239e" />
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Apple Touch Icon (inline SVG as data URI fallback) -->
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f0f2f8;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Top Nav ── */
+    .top-nav {
+      background-color: #12239e;
+      display: flex;
+      align-items: center;
+      padding: 8px 14px;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .top-nav img {
+      height: 38px;
+      object-fit: contain;
+    }
+
+    /* ── Button Bar ── */
+    .nav-buttons {
+      background-color: #12239e;
+      padding: 8px 10px 10px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .nav-buttons button {
+      background-color: #1a6be0;
+      color: white;
+      border: none;
+      padding: 9px 13px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.3px;
+    }
+
+    .nav-buttons button:hover,
+    .nav-buttons button.active {
+      background-color: #41a4ff;
+      transform: scale(1.04);
+    }
+
+    /* ── Report Area ── */
+    .report-container {
+      flex: 1;
+      padding: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .iframe-wrapper {
+      flex: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 16px rgba(0, 0, 0, 0.13);
+      position: relative;
+      background: white;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .fullscreen-toggle {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: rgba(0, 0, 0, 0.55);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 17px;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+
+    .fullscreen-toggle:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    /* ── Mobile Responsive ── */
+    @media (max-width: 600px) {
+      .top-nav img {
+        height: 30px;
+      }
+
+      .nav-buttons {
+        gap: 6px;
+        padding: 7px 8px 9px;
+      }
+
+      .nav-buttons button {
+        font-size: 11.5px;
+        padding: 8px 10px;
+        border-radius: 6px;
+      }
+
+      .report-container {
+        padding: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar: OPC Logo only -->
+  <div class="top-nav">
+    <img src="https://www.opc.co.in/images/logo.jpg" alt="OPC Logo" />
+  </div>
+
+  <!-- Report Selector Buttons -->
+  <div class="nav-buttons">
+    <button id="btn-primary"    onclick="showReport(this, 'https://app.powerbi.com/reportEmbed?reportId=9489bc2b-3a08-434b-9099-326e7e7fe727&autoAuth=true&ctid=3cda4921-d376-43af-9c81-f6dfc2733f97')">Primary</button>
+    <button id="btn-secondary"  onclick="showReport(this, 'https://app.powerbi.com/reportEmbed?reportId=d381df97-89a9-412b-b655-938ca96e19da&autoAuth=true&ctid=3cda4921-d376-43af-9c81-f6dfc2733f97')">Secondary</button>
+    <button id="btn-management" onclick="showReport(this, 'https://app.powerbi.com/reportEmbed?reportId=28aea574-a378-4ccf-9027-35f956342101&autoAuth=true&ctid=3cda4921-d376-43af-9c81-f6dfc2733f97')">Management</button>
+    <button id="btn-funding"    onclick="showReport(this, 'https://app.powerbi.com/reportEmbed?reportId=71eda9ea-af29-436f-93c8-0c0e9d5377d4&autoAuth=true&ctid=3cda4921-d376-43af-9c81-f6dfc2733f97')">Funding</button>
+    <button id="btn-financials" onclick="showReport(this, 'https://app.powerbi.com/reportEmbed?reportId=99984408-f908-455e-a0af-55641353c06b&autoAuth=true&ctid=3cda4921-d376-43af-9c81-f6dfc2733f97')">Financials</button>
+    <button id="btn-competition" onclick="showReport(this, 'https://app.powerbi.com/reportEmbed?reportId=afc9c2e4-4654-473c-8666-eeebd8798194&autoAuth=true&ctid=3cda4921-d376-43af-9c81-f6dfc2733f97')">Competition</button>
+  </div>
+
+  <!-- Report Viewer -->
+  <div class="report-container">
+    <div class="iframe-wrapper">
+      <iframe id="reportFrame" allowfullscreen title="Power BI Report"></iframe>
+      <button class="fullscreen-toggle" onclick="toggleFullScreen()">⛶</button>
+    </div>
+  </div>
+
+  <script>
+    let activeBtn = null;
+
+    function showReport(btn, url) {
+      document.getElementById('reportFrame').src = url;
+      if (activeBtn) activeBtn.classList.remove('active');
+      btn.classList.add('active');
+      activeBtn = btn;
+    }
+
+    function toggleFullScreen() {
+      const iframe = document.getElementById('reportFrame');
+      if (!document.fullscreenElement) {
+        iframe.requestFullscreen().catch(err => console.warn("Fullscreen error:", err));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Load Primary report by default
+    window.addEventListener('DOMContentLoaded', () => {
+      const firstBtn = document.getElementById('btn-primary');
+      showReport(firstBtn, 'https://app.powerbi.com/reportEmbed?reportId=9489bc2b-3a08-434b-9099-326e7e7fe727&autoAuth=true&ctid=3cda4921-d376-43af-9c81-f6dfc2733f97');
+    });
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW error:', err));
+    }
+  </script>
+</body>
+</html>
