@@ -1,8 +1,10 @@
-const CACHE_NAME = 'opc-reports-v1';
+const CACHE_NAME = 'opc-reports-v2';
 const ASSETS = [
-  './',
-  './index.html',
-  './manifest.json'
+  '/S3G-Dashboard/',
+  '/S3G-Dashboard/index.html',
+  '/S3G-Dashboard/manifest.json',
+  '/S3G-Dashboard/icon-192.png',
+  '/S3G-Dashboard/icon-512.png'
 ];
 
 self.addEventListener('install', event => {
@@ -22,9 +24,7 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Only cache same-origin requests; let Power BI requests pass through
   if (!event.request.url.startsWith(self.location.origin)) return;
-
   event.respondWith(
     caches.match(event.request).then(cached => cached || fetch(event.request))
   );
